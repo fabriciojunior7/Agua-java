@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import javax.swing.Timer;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -22,10 +23,11 @@ public class Agua extends JComponent implements ActionListener, KeyListener{
     private static int numBarras = largura/larguraB;
     //private static int numBarras = 4;
     private static Agua jogo = new Agua();
-    private static int frames = 0;
+    private static int frames = 0, framesInternos = 0;
     private static int indexAtual = 0;
     private static int velocidadeSimulador = 10;
-    private static int oo;
+    private static int oo = 1;
+    private static boolean aleatorio = true;
 
     
     public static void main(String[] args){
@@ -55,6 +57,20 @@ public class Agua extends JComponent implements ActionListener, KeyListener{
         frames++;
         //Barras
         if(frames % velocidadeSimulador == 0){
+            framesInternos++;
+            
+            if(aleatorio == true && framesInternos % 250 == 0){
+                Random rand = new Random();
+                int random = rand.nextInt(2);
+                if(random == 0){
+                    diminuir();
+                }
+                else{
+                    aumentar();
+                }
+                //System.out.println(random);
+            }
+            
             Barra b = (Barra) ondas.get(0);
             b.atualizarPosicao(altura);
             calda.remove(calda.size()-1);
@@ -91,22 +107,12 @@ public class Agua extends JComponent implements ActionListener, KeyListener{
     public void keyPressed(KeyEvent e) {
         Barra bb = (Barra) ondas.get(0);
         //Aumentar
-        if(e.getKeyCode() == KeyEvent.VK_UP && bb.getOcilacao() < 16){
-            if(bb.getOcilacao() < 1){
-                bb.setOcilacao(1);
-            }
-            else if(bb.getOcilacao() == 1){
-                bb.setOcilacao(2);
-            }
-            else{
-                bb.setOcilacao(bb.getOcilacao()*2);
-            }
-            oo = bb.getOcilacao();
+        if(e.getKeyCode() == KeyEvent.VK_UP){
+            aumentar();
         }
         //Diminuir
         else if(e.getKeyCode() == KeyEvent.VK_DOWN){
-            bb.setOcilacao(bb.getOcilacao()/2);
-            oo = bb.getOcilacao();
+            diminuir();
         }
         
         //Esquerda
@@ -140,6 +146,16 @@ public class Agua extends JComponent implements ActionListener, KeyListener{
             //System.out.println(larguraB);
         }
         
+        //Aleatorio
+        else if(e.getKeyCode() == KeyEvent.VK_SPACE){
+            if(aleatorio == false){
+                aleatorio = true;
+            }
+            else{
+                aleatorio = false;
+            }
+        }
+        
         //Velocidade Simulador
         else if(e.getKeyCode() == KeyEvent.VK_W && velocidadeSimulador > 1){
             velocidadeSimulador /= 2;
@@ -160,6 +176,29 @@ public class Agua extends JComponent implements ActionListener, KeyListener{
     public void manterOcilacao(){
         Barra b = (Barra) ondas.get(0);
         b.setOcilacao(oo);
+    }
+    
+    public void aumentar(){
+        Barra bb = (Barra) ondas.get(0);
+        
+        if(bb.getOcilacao() < 16){
+            if(bb.getOcilacao() < 1){
+                bb.setOcilacao(1);
+            }
+            else if(bb.getOcilacao() == 1){
+                bb.setOcilacao(2);
+            }
+            else{
+                bb.setOcilacao(bb.getOcilacao()*2);
+            }
+            oo = bb.getOcilacao();
+        }
+    }
+    
+    public void diminuir(){
+        Barra bb = (Barra) ondas.get(0);
+        bb.setOcilacao(bb.getOcilacao()/2);
+        oo = bb.getOcilacao();
     }
     
 }
